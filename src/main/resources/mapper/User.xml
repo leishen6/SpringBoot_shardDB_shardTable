@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyl.dao.UserDao">
+    
+    <resultMap id="baseResultMap" type="com.lyl.bean.User">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="age" property="age" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <insert id="addUser" parameterType="com.lyl.bean.User">
+        INSERT INTO t_user (
+           id, age, name
+        )
+        VALUES (
+        #{id,jdbcType=INTEGER},
+        #{age,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR}
+        )
+    </insert>
+   
+    <select id="findAll" resultMap="baseResultMap">
+        SELECT * FROM t_user
+    </select>
+	
+	<select id="findByName" parameterType="String" resultMap="baseResultMap">
+        SELECT * FROM t_user  WHERE name=#{userName,jdbcType=VARCHAR}
+    </select>
+    
+    <update id="updateUser" parameterType="com.lyl.bean.User">
+        update t_user set  age=#{age}  where name=#{name, jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteUser" parameterType="String">
+        delete from t_user where name=#{userName, jdbcType=VARCHAR}
+    </delete>
+    
+</mapper>

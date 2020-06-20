@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyl.dao.RoleDao">
+    
+    <resultMap id="baseResultMap" type="com.lyl.bean.Role">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <insert id="addRole" parameterType="com.lyl.bean.Role">
+        INSERT INTO t_role (
+           id, role_name
+        )
+        VALUES (
+        #{id,jdbcType=INTEGER},
+        #{roleName,jdbcType=VARCHAR}
+        )
+    </insert>
+	
+	<select id="findRoleByName" parameterType="String" resultMap="baseResultMap">
+        SELECT * FROM t_role  WHERE role_name=#{roleName,jdbcType=VARCHAR}
+    </select>
+    
+</mapper>
