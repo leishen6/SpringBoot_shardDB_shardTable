@@ -32,6 +32,12 @@ public class MyPreciseTableShardingAlgorithm implements PreciseShardingAlgorithm
     };
 
 
+    /**
+     *  数据分片
+     * @param tableNames 实际表集合; t_user0、t_user1、t_user2
+     * @param preciseShardingValue 分片键 name 用户名值
+     * @return
+     */
     @Override
     public String doSharding(Collection<String> tableNames, PreciseShardingValue<String> preciseShardingValue) {
 

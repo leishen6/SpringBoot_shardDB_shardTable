@@ -32,6 +32,12 @@ public class MyPreciseDBShardingAlgorithm  implements PreciseShardingAlgorithm<S
     };
 
 
+    /**
+     *  数据分片
+     * @param dbNames 实际数据源集合; springboot0、springboot1
+     * @param preciseShardingValue 分片键 name 用户名值
+     * @return
+     */
     @Override
     public String doSharding(Collection<String> dbNames, PreciseShardingValue<String> preciseShardingValue) {
 
