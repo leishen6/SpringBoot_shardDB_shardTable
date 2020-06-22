@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @PACKAGE_NAME: com.lyl
  * @ClassName: RoleRestAPITest
- * @Description:
+ * @Description: 单元测试
  * @Date: 2020-06-19 13:24
  **/
 public class RoleRestAPITest {

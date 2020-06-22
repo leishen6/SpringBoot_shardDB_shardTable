@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  *@Title: UserRestAPITest
- * @Description: 
+ * @Description:  单元测试
  * @date: 2019年8月23日 下午8:27:34
  */
 public class UserRestAPITest {
