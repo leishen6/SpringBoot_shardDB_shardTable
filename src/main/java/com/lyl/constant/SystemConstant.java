@@ -1,5 +1,6 @@
 package com.lyl.constant;
 
+
 /**
  * @PACKAGE_NAME: com.lyl.constant
  * @ClassName: SystemConstant
@@ -28,6 +29,9 @@ public class SystemConstant {
 
     /** 分割符 **/
     public static final String _DEFAULT_SEPARATOR_COMMA = ",";
+
+    /** 是否启用redis, 默认不启用 **/
+    public static final String DEFAULT_IF_DISABLE_REDIS = "default_if_disable_redis";
 
 
 }

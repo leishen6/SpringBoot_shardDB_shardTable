@@ -1,6 +1,8 @@
 package com.lyl.utils;
 
+import cn.hutool.setting.dialect.Props;
 import com.alibaba.fastjson.JSON;
+import com.lyl.constant.SystemConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,19 @@ import java.util.Set;
  */
 @Service
 public class RedisTemplateUtils {
-    
+
+	private static boolean flag;
+
+	static{
+		// 是否启用redis, 注意：默认是不启用的
+		flag = new Props("application-redis.properties").getBool(SystemConstant.DEFAULT_IF_DISABLE_REDIS);
+	}
+
+
 	@Autowired
 	StringRedisTemplate stringRedisTemplate ;
-    
+
+
 	/**
 	 * @Description: 插入
 	 * @param key
@@ -27,6 +38,10 @@ public class RedisTemplateUtils {
 	 *@date: 2019年9月5日 下午7:02:45
 	 */
 	public <T> boolean set(String key, T value) {
+		// 是否启用redis
+		if (flag){
+			return true;
+		}
 
 		try {
 
@@ -53,6 +68,12 @@ public class RedisTemplateUtils {
 	 *@date: 2019年9月5日 下午7:03:16
 	 */
 	public <T> T get(String key,Class<T> clazz){
+
+		// 是否启用redis
+		if (flag){
+			return stringToBean(null, clazz);
+		}
+
         try {
             String value = stringRedisTemplate.opsForValue().get(key);
 
@@ -84,6 +105,11 @@ public class RedisTemplateUtils {
 	 * @param key
 	 */
 	public void deleteByKey(String key) {
+		// 是否启用redis
+		if (flag){
+			return ;
+		}
+
 		if (key != null && !"".equals(key)){
 			stringRedisTemplate.delete(key);
 		}
