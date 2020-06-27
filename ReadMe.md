@@ -7,6 +7,8 @@
 3.  整合了 **Mybatis** 、**Redis**，以及 详细的 日志配置；
 4.  整合了 **Sharding-JDBC** ，实现了 分库分表，并且在分库分表中实现了自定义的分片算法; 一致性Hash算法，易于扩容；
 5.  添加了 **单元测试**，使用Spring提供的RestTemplate调用RestFul风格的API接口；
+6.  整合了 **quartz 定时任务框架** ，并进行了封装，只需在构建完定时任务Job类后，在 **application-quartz.properties** 配置文件中进行简单配置即可；
+7.  实现了 **reids 分布式锁** ，当项目部署集群时，使用分布式锁来避免多台节点的定时任务重复执行；
 
 
 
@@ -19,6 +21,7 @@
 5.  SpringBoot项目简单的日志配置：https://www.cnblogs.com/bigdataZJ/p/springboot-log.html
 6.  SpringBoot项目集成Redis：https://www.jianshu.com/p/fd65156ff630
 7.  SpringBoot项目集成Sharding-JDBC：https://shardingsphere.apache.org/document/legacy/3.x/document/cn/manual/
+8.  SpringBoot项目集成Quartz：https://blog.csdn.net/upxiaofeng/article/details/79415108
 
 
 

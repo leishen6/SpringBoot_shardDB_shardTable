@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @Description:
  * @Date: 2020-06-19 13:04
  **/
-@Service
+@Service("roleService")
 public class RoleServiceImpl implements RoleService {
 
     @Autowired

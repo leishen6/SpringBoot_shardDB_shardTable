@@ -16,7 +16,7 @@ import java.util.List;
  * @date: 2019年8月23日 下午4:29:01
  */
 
-@Service // 表示此是服务层
+@Service("userService") // 表示此是服务层
 public class UserServiceImpl implements UserService {
 
 	@Autowired

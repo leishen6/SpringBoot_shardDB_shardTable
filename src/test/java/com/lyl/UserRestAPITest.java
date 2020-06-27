@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
  */
 public class UserRestAPITest {
 
-	private String userName = "木子雷掘金";
+	private String userName = "单例模式";
 
 
 	@Test
