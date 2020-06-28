@@ -16,7 +16,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 /**
  * @PACKAGE_NAME: com.lyl.quartz
  * @ClassName: StartQuartzJobListener
- * @Description: Schedulerz 注入Spring容器 ; 这里采用监听spring容器加载完毕后事件，启动任务调用
+ * @Description: Scheduler注入到Spring容器，并采用spring容器加载完毕后的监听事件，启动定时任务
  * @Date: 2020-06-26 20:47
  **/
 @Configuration
