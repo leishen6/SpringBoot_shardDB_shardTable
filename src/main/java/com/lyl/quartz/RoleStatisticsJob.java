@@ -2,6 +2,7 @@ package com.lyl.quartz;
 
 import com.alibaba.fastjson.JSON;
 import com.lyl.bean.Role;
+import com.lyl.constant.SystemConstant;
 import com.lyl.service.RoleService;
 import com.lyl.utils.RedisTemplateUtils;
 import com.lyl.utils.SpringContextJobUtil;
@@ -23,6 +24,9 @@ public class RoleStatisticsJob implements Job {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
+    private final String lockKey = "RoleStatisticsJob";
+    private final String lockValue = "RoleStatisticsJob";
+
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
         logger.debug("Role Quartz execute start . . . . . . .");
@@ -31,7 +35,8 @@ public class RoleStatisticsJob implements Job {
                 .getBean("redisTemplateUtils");
 
         // 获取分布式锁
-        boolean flag = redisTemplateUtils.tryGetDistributedLock("RoleStatisticsJob", "RoleStatisticsJob", 1000);
+        boolean flag = redisTemplateUtils.tryGetDistributedLock(lockKey, lockValue,
+                SystemConstant.DISTRIBUTEDLOCK_EXPIRETIME);
 
         try {
             if (flag){
@@ -49,7 +54,7 @@ public class RoleStatisticsJob implements Job {
         }finally {
             // 保证分布式锁最终被释放
             if (flag){
-                redisTemplateUtils.releaseDistributedLock("RoleStatisticsJob", "RoleStatisticsJob");
+                redisTemplateUtils.releaseDistributedLock(lockKey, lockValue);
             }
         }
 

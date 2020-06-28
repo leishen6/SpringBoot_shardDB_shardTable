@@ -33,5 +33,8 @@ public class SystemConstant {
     /** 是否启用redis, 默认不启用 **/
     public static final String DEFAULT_IF_DISABLE_REDIS = "default_if_disable_redis";
 
+    /** redis 分布式锁的过期时间 **/
+    public static final int DISTRIBUTEDLOCK_EXPIRETIME = 1000;
+
 
 }

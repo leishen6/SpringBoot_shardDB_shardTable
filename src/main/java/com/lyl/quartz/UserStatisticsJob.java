@@ -2,6 +2,7 @@ package com.lyl.quartz;
 
 import com.alibaba.fastjson.JSON;
 import com.lyl.bean.User;
+import com.lyl.constant.SystemConstant;
 import com.lyl.service.UserService;
 import com.lyl.utils.RedisTemplateUtils;
 import com.lyl.utils.SpringContextJobUtil;
@@ -23,6 +24,8 @@ public class UserStatisticsJob implements Job {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final String lockKey = "UserStatisticsJob";
+    private final String lockValue = "UserStatisticsJob";
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
@@ -32,7 +35,8 @@ public class UserStatisticsJob implements Job {
                 .getBean("redisTemplateUtils");
 
         // 获取分布式锁
-        boolean flag = redisTemplateUtils.tryGetDistributedLock("UserStatisticsJob", "UserStatisticsJob", 1000);
+        boolean flag = redisTemplateUtils.tryGetDistributedLock(lockKey, lockValue,
+                SystemConstant.DISTRIBUTEDLOCK_EXPIRETIME);
 
         try {
             if (flag){
@@ -51,7 +55,7 @@ public class UserStatisticsJob implements Job {
         }finally {
             // 保证分布式锁最终被释放
             if (flag){
-                redisTemplateUtils.releaseDistributedLock("UserStatisticsJob", "UserStatisticsJob");
+                redisTemplateUtils.releaseDistributedLock(lockKey, lockValue);
             }
         }
 
