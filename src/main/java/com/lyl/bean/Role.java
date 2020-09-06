@@ -7,20 +7,25 @@ import java.io.Serializable;
 /**
  * @PACKAGE_NAME: com.lyl.bean
  * @ClassName: Role
- * @Description:  角色
+ * @Description: 角色
  * @Date: 2020-06-19 12:54
  **/
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    /** 编号 */
+
+    /**
+     * 编号
+     */
     private int id;
-    /** 姓名 */
+
+    /**
+     * 姓名
+     */
     private String roleName;
 
 
-    public Role(){
-
+    public Role() {
     }
 
 

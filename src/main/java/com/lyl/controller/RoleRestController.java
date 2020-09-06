@@ -32,42 +32,39 @@ public class RoleRestController {
     private RoleService roleService;
 
 
-    @ApiOperation(value="新增角色", notes="新增角色")
+    @ApiOperation(value = "新增角色", notes = "新增角色")
     @PostMapping("/role/addRole")
     public Response<Boolean> addRole(@RequestBody RequestParameter<Role> requestParameter) {
-        logger.info("request: "+ requestParameter.toString());
+        logger.info("request: {}", requestParameter.toString());
         logger.info("开始新增...");
 
         boolean flag = roleService.addRole(requestParameter.getData());
         Response response = null;
         if (flag) {
             response = new Response(flag, ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message());
-        }
-        else {
+        } else {
             response = new Response(flag, ResponseCode.ERROR.code(), ResponseCode.ERROR.message());
         }
-        logger.info("response: "+response.toString() +"\n");
+        logger.info("response: {} \n", response.toString());
         return response;
     }
 
 
-
-    @ApiOperation(value="根据name查询角色", notes="根据名字查询角色数据")
+    @ApiOperation(value = "根据name查询角色", notes = "根据名字查询角色数据")
     @PostMapping("/role/findRoleByName")
     public Response<Role> findRoleByName(@RequestBody RequestParameter<String> requestParameter) {
-        logger.info("request: "+ requestParameter.toString());
+        logger.info("request: {}", requestParameter.toString());
         logger.info("开始根据名字查询角色数据...");
 
-        Role role =  roleService.findRoleByName(requestParameter.getData());
+        Role role = roleService.findRoleByName(requestParameter.getData());
 
         Response response = null;
         if (role != null) {
             response = new Response(role, ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message());
-        }
-        else {
+        } else {
             response = new Response("", ResponseCode.ERROR.code(), ResponseCode.ERROR.message());
         }
-        logger.info("response: "+response.toString() +"\n");
+        logger.info("response: {} \n", response.toString());
         return response;
     }
 

@@ -8,18 +8,25 @@ package com.lyl.bean;
  **/
 public class JobBean {
 
-    /** 任务描述, 任务名 */
+    /**
+     * 任务描述, 任务名
+     */
     private String jobName;
 
-    /** 任务运行时间表达式 */
+    /**
+     * 任务运行时间表达式
+     */
     private String cronExpression;
 
-    /** 任务分组 */
+    /**
+     * 任务分组
+     */
     private String jobGroup;
 
-    /** 任务类的全路径 */
+    /**
+     * 任务类的全路径
+     */
     private String jobClass;
-
 
 
     public String getJobName() {

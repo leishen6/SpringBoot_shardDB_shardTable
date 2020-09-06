@@ -10,16 +10,15 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @PACKAGE_NAME: com.lyl
  * @ClassName: RoleRestAPITest
- * @Description: 单元测试
+ * @Description: role 单元测试
  * @Date: 2020-06-19 13:24
  **/
 public class RoleRestAPITest {
 
     private String roleName = "程序员";
 
-
     @Test
-    public void addRole(){
+    public void addRole() {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "http://localhost:8083/v1/api/role/addRole";
@@ -38,7 +37,7 @@ public class RoleRestAPITest {
 
 
     @Test
-    public void findRoleByName(){
+    public void findRoleByName() {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "http://localhost:8083/v1/api/role/findRoleByName";

@@ -13,28 +13,33 @@ import java.util.Collection;
 /**
  * @PACKAGE_NAME: com.lyl.algorithm
  * @ClassName: MyPreciseTableShardingAlgorithm
- * @Description:  自定义表的精确分片算法，根据用户名进行分片
+ * @Description: 自定义表的精确分片算法，根据用户名进行分片
  * @Date: 2020-06-18 17:11
  **/
 public class MyPreciseTableShardingAlgorithm implements PreciseShardingAlgorithm<String> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    // 分表虚拟节点数量
+    /**
+     * 分表虚拟节点数量
+     */
     public static int virtualNodeCount;
 
-    // 分表虚拟节点范围
+    /**
+     * 分表虚拟节点范围
+     */
     public static String virtualNodeCountRang;
 
 
-    public MyPreciseTableShardingAlgorithm(){
+    public MyPreciseTableShardingAlgorithm() {
 
-    };
+    }
 
 
     /**
-     *  数据分片
-     * @param tableNames 实际表集合; t_user0、t_user1、t_user2
+     * 数据分片
+     *
+     * @param tableNames           实际表集合; t_user0、t_user1、t_user2
      * @param preciseShardingValue 分片键 name 用户名值
      * @return
      */
@@ -48,7 +53,7 @@ public class MyPreciseTableShardingAlgorithm implements PreciseShardingAlgorithm
 
 
         // 根据用户名的hash值对《virtualNodeCount》进行取余后，得到余数，余数一定在0，《virtualNodeCount》之间的
-        Integer mod =  preciseShardingValue.getValue().hashCode() % virtualNodeCount;
+        Integer mod = preciseShardingValue.getValue().hashCode() % virtualNodeCount;
 
         // 由于获取的字符串的hash值可能存在负数，所以需要需要取其绝对值
         mod = ShardingUtils.getAbsoluteValue(mod);
@@ -59,7 +64,7 @@ public class MyPreciseTableShardingAlgorithm implements PreciseShardingAlgorithm
         for (String each : tableNames) {
             // 将余数与配置的实际表名进行匹配
             if (each.endsWith(String.valueOf(shardingValue))) {
-                logger.info("logic table : "+ each);
+                logger.info("logic table : {}", each);
                 return each;
             }
         }

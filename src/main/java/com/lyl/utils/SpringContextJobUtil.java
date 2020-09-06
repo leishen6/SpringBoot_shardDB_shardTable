@@ -19,17 +19,17 @@ public class SpringContextJobUtil implements ApplicationContextAware {
     private static ApplicationContext context;
 
     @Override
-    @SuppressWarnings("static-access" )
+    @SuppressWarnings("static-access")
     public void setApplicationContext(ApplicationContext contex)
             throws BeansException {
         this.context = contex;
     }
 
-    public static Object getBean(String beanName){
+    public static Object getBean(String beanName) {
         return context.getBean(beanName);
     }
 
-    public static String getMessage(String key){
+    public static String getMessage(String key) {
         return context.getMessage(key, null, Locale.getDefault());
     }
 

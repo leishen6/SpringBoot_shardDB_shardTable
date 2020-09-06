@@ -19,248 +19,244 @@ import java.util.Set;
 
 /**
  * @Title: RedisTemplateService
- * @Description:  工具类
+ * @Description: 工具类
  * @date: 2019年9月5日 下午7:01:42
  */
 @Service("redisTemplateUtils")
 public class RedisTemplateUtils {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-	private static boolean flag;
+    private static boolean flag;
 
-	static{
-		// 是否启用redis, 注意：默认是不启用的
-		flag = new Props("application-redis.properties").getBool(SystemConstant.DEFAULT_IF_DISABLE_REDIS);
-	}
-
-
-	@Autowired
-	StringRedisTemplate stringRedisTemplate ;
-
-	@Autowired
-	RedisTemplate redisTemplate ;
+    static {
+        // 是否启用redis, 注意：默认是不启用的
+        flag = new Props("application-redis.properties").getBool(SystemConstant.DEFAULT_IF_DISABLE_REDIS);
+    }
 
 
-	/**
-	 * @Description: 插入
-	 * @param key
-	 * @param value
-	 * @return
-	 *@date: 2019年9月5日 下午7:02:45
-	 */
-	public <T> boolean set(String key, T value) {
-		// 是否启用redis
-		if (flag){
-			return true;
-		}
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
-		try {
+    @Autowired
+    RedisTemplate redisTemplate;
 
-			// 任意类型转换成String
-			String val = beanToString(value);
 
-			if (val == null || val.length() <= 0) {
-				return false;
-			}
+    /**
+     * @param key
+     * @param value
+     * @return
+     * @Description: 插入
+     * @date: 2019年9月5日 下午7:02:45
+     */
+    public <T> boolean set(String key, T value) {
+        // 是否启用redis
+        if (flag) {
+            return true;
+        }
 
-			stringRedisTemplate.opsForValue().set(key, val);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	/**
-	 * @Description: 根据key获取元素
-	 * @param key
-	 * @param clazz
-	 * @return
-	 *@date: 2019年9月5日 下午7:03:16
-	 */
-	public <T> T get(String key,Class<T> clazz){
+        try {
 
-		// 是否启用redis
-		if (flag){
-			return stringToBean(null, clazz);
-		}
+            // 任意类型转换成String
+            String val = beanToString(value);
+
+            if (val == null || val.length() <= 0) {
+                return false;
+            }
+
+            stringRedisTemplate.opsForValue().set(key, val);
+            return true;
+        } catch (Exception e) {
+            logger.error("redis set fail .", e);
+            return false;
+        }
+    }
+
+    /**
+     * @param key
+     * @param clazz
+     * @return
+     * @Description: 根据key获取元素
+     * @date: 2019年9月5日 下午7:03:16
+     */
+    public <T> T get(String key, Class<T> clazz) {
+
+        // 是否启用redis
+        if (flag) {
+            return stringToBean(null, clazz);
+        }
 
         try {
             String value = stringRedisTemplate.opsForValue().get(key);
 
-            return stringToBean(value,clazz);
-        }catch (Exception e){
-        	e.printStackTrace();
-            return null ;
+            return stringToBean(value, clazz);
+        } catch (Exception e) {
+            logger.error("redis get fail .", e);
+            return null;
         }
     }
-	
-	
-	/**
-	 * @Description: 模糊查询key，然后删除模糊查询出的所有key
-	 * @param prex
-	 *@date: 2019年9月5日 下午7:53:25
-	 */
-	public void deleteByPrex(String prex) {
-        if (prex != null && !"".equals(prex)){
-			Set<String> keys = stringRedisTemplate.keys(prex);
-			if (keys.size() > 0) {
-				stringRedisTemplate.delete(keys);
-			}
-		}
+
+
+    /**
+     * @param prex
+     * @Description: 模糊查询key，然后删除模糊查询出的所有key
+     * @date: 2019年9月5日 下午7:53:25
+     */
+    public void deleteByPrex(String prex) {
+        if (prex != null && !"".equals(prex)) {
+            Set<String> keys = stringRedisTemplate.keys(prex);
+            if (keys.size() > 0) {
+                stringRedisTemplate.delete(keys);
+            }
+        }
     }
 
 
-	/**
-	 *  根据　key　删除redis缓存
-	 * @param key
-	 */
-	public void deleteByKey(String key) {
-		// 是否启用redis
-		if (flag){
-			return ;
-		}
+    /**
+     * 根据　key　删除redis缓存
+     *
+     * @param key
+     */
+    public void deleteByKey(String key) {
+        // 是否启用redis
+        if (flag) {
+            return;
+        }
 
-		if (key != null && !"".equals(key)){
-			stringRedisTemplate.delete(key);
-		}
-	}
-
-
-
-	private static final Long SUCCESS = 1L;
-
-	private final String releaseDistributedLocakLua = "if redis.call('get', KEYS[1]) == ARGV[1] " +
-										"then " +
-			                                 "return redis.call('del', KEYS[1]) " +
-										"else " +
-			                                  "return 0 " +
-			                            "end";
-
-	private final String getDistributedLocakLua = "if redis.call('setNx',KEYS[1],ARGV[1])  then " +
-										"   if redis.call('get',KEYS[1])==ARGV[1] then " +
-										"      return redis.call('expire',KEYS[1],ARGV[2]) " +
-										"   else " +
-										"      return 0 " +
-										"   end " +
-										"end";
+        if (key != null && !"".equals(key)) {
+            stringRedisTemplate.delete(key);
+        }
+    }
 
 
-	/**
-	 *  获取分布式锁
-	 * @param lockKey
-	 * @param lockValue
-	 * @param expireTime
-	 * @return
-	 */
-	public boolean tryGetDistributedLock(final String lockKey, final String lockValue, int expireTime){
-		// 是否启用redis
-		if (flag){
-			return true;
-		}
+    private static final Long SUCCESS = 1L;
 
-		// redis脚本，执行脚本的返回类型为 Long
-		RedisScript<Long> redisScript = new DefaultRedisScript<>(getDistributedLocakLua, Long.class);
+    private final String releaseDistributedLocakLua = "if redis.call('get', KEYS[1]) == ARGV[1] " +
+            "then " +
+            "return redis.call('del', KEYS[1]) " +
+            "else " +
+            "return 0 " +
+            "end";
 
-		// 对非string类型的序列化
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new StringRedisSerializer());
-		Object result = redisTemplate.execute(redisScript, Collections.singletonList(lockKey),
-				lockValue, String.valueOf(expireTime));
+    private final String getDistributedLocakLua = "if redis.call('setNx',KEYS[1],ARGV[1])  then " +
+            "   if redis.call('get',KEYS[1])==ARGV[1] then " +
+            "      return redis.call('expire',KEYS[1],ARGV[2]) " +
+            "   else " +
+            "      return 0 " +
+            "   end " +
+            "end";
 
-		if (SUCCESS.equals(result)) {
-			return true;
-		}
+
+    /**
+     * 获取分布式锁
+     *
+     * @param lockKey
+     * @param lockValue
+     * @param expireTime
+     * @return
+     */
+    public boolean tryGetDistributedLock(final String lockKey, final String lockValue, int expireTime) {
+        // 是否启用redis
+        if (flag) {
+            return true;
+        }
+
+        // redis脚本，执行脚本的返回类型为 Long
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(getDistributedLocakLua, Long.class);
+
+        // 对非string类型的序列化
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        Object result = redisTemplate.execute(redisScript, Collections.singletonList(lockKey),
+                lockValue, String.valueOf(expireTime));
+
+        if (SUCCESS.equals(result)) {
+            return true;
+        }
 
         return false;
-	}
-
-
-	/**
-	 * 释放分布式锁
-	 * @param lockKey
-	 * @param lockValue
-	 * @return
-	 */
-	public synchronized boolean releaseDistributedLock(final String lockKey, final String lockValue){
-		// 是否启用redis
-		if (flag){
-			return true;
-		}
-
-		// redis脚本，执行脚本的返回类型为 Long
-		RedisScript<Long> redisScript = new DefaultRedisScript<>(releaseDistributedLocakLua, Long.class);
-
-		// 对非string类型的序列化
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new StringRedisSerializer());
-
-		try {
-			Object result = redisTemplate.execute(redisScript, Collections.singletonList(lockKey), lockValue);
-			if (SUCCESS.equals(result)) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error("releaseDistributedLock fail : " , e);
-		}
-		return false;
-	}
-
-
-	
-	
-	/**
-	 * @Description: 将字符串转为对象
-	 * @param value
-	 * @param clazz
-	 * @return
-	 *@date: 2019年9月5日 下午7:04:05
-	 */
-	@SuppressWarnings("unchecked")
-    private <T> T stringToBean(String value, Class<T> clazz) {
-        if(value==null||value.length()<=0||clazz==null){
-            return null;
-        }
-
-        if(clazz ==int.class ||clazz==Integer.class){
-            return (T)Integer.valueOf(value);
-        }
-        else if(clazz==long.class||clazz==Long.class){
-            return (T)Long.valueOf(value);
-        }
-        else if(clazz==String.class){
-            return (T)value;
-        }else if (clazz == List.class){
-            return JSON.toJavaObject(JSON.parseArray(value),clazz);
-        }else {
-			return JSON.toJavaObject(JSON.parseObject(value),clazz);
-		}
     }
-	
-	
-	/**
-	 * @Description: 将任意对象转为字符串
-	 * @param value
-	 * @return
-	 *@date: 2019年9月5日 下午7:04:41
-	 */
-	private <T> String beanToString(T value) {
 
-        if(value==null){
+
+    /**
+     * 释放分布式锁
+     *
+     * @param lockKey
+     * @param lockValue
+     * @return
+     */
+    public synchronized boolean releaseDistributedLock(final String lockKey, final String lockValue) {
+        // 是否启用redis
+        if (flag) {
+            return true;
+        }
+
+        // redis脚本，执行脚本的返回类型为 Long
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(releaseDistributedLocakLua, Long.class);
+
+        // 对非string类型的序列化
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+
+        try {
+            Object result = redisTemplate.execute(redisScript, Collections.singletonList(lockKey), lockValue);
+            if (SUCCESS.equals(result)) {
+                return true;
+            }
+        } catch (Exception e) {
+            logger.error("releaseDistributedLock fail : ", e);
+        }
+        return false;
+    }
+
+
+    /**
+     * @param value
+     * @param clazz
+     * @return
+     * @Description: 将字符串转为对象
+     * @date: 2019年9月5日 下午7:04:05
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T stringToBean(String value, Class<T> clazz) {
+        if (value == null || value.length() <= 0 || clazz == null) {
             return null;
         }
-        Class <?> clazz = value.getClass();
-        if(clazz==int.class||clazz==Integer.class){
-            return ""+value;
+
+        if (clazz == int.class || clazz == Integer.class) {
+            return (T) Integer.valueOf(value);
+        } else if (clazz == long.class || clazz == Long.class) {
+            return (T) Long.valueOf(value);
+        } else if (clazz == String.class) {
+            return (T) value;
+        } else if (clazz == List.class) {
+            return JSON.toJavaObject(JSON.parseArray(value), clazz);
+        } else {
+            return JSON.toJavaObject(JSON.parseObject(value), clazz);
         }
-        else if(clazz==long.class||clazz==Long.class){
-            return ""+value;
+    }
+
+
+    /**
+     * @param value
+     * @return
+     * @Description: 将任意对象转为字符串
+     * @date: 2019年9月5日 下午7:04:41
+     */
+    private <T> String beanToString(T value) {
+
+        if (value == null) {
+            return null;
         }
-        else if(clazz==String.class){
-            return (String)value;
-        }else {
+        Class<?> clazz = value.getClass();
+        if (clazz == int.class || clazz == Integer.class) {
+            return "" + value;
+        } else if (clazz == long.class || clazz == Long.class) {
+            return "" + value;
+        } else if (clazz == String.class) {
+            return (String) value;
+        } else {
             return JSON.toJSONString(value);
         }
     }

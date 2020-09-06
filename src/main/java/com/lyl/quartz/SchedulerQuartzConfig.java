@@ -2,7 +2,16 @@ package com.lyl.quartz;
 
 import cn.hutool.setting.dialect.Props;
 import com.lyl.bean.JobBean;
-import org.quartz.*;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +24,7 @@ import java.util.List;
 /**
  * @PACKAGE_NAME: com.lyl.quartz
  * @ClassName: QuartzScheduler
- * @Description:  定时任务 quartz 配置类
+ * @Description: 定时任务 quartz 配置类
  * @Date: 2020-06-26 17:52
  **/
 @Configuration
@@ -23,7 +32,9 @@ public class SchedulerQuartzConfig {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    // 任务调度器
+    /**
+     * 任务调度器
+     */
     @Autowired
     private Scheduler scheduler;
 
@@ -32,11 +43,12 @@ public class SchedulerQuartzConfig {
      *
      * @throws SchedulerException
      */
-    public void startJob() throws Exception {
+    public void startJob()
+            throws Exception {
         List<JobBean> jobBeanList = getJobBeanByConfig();
 
-        if (jobBeanList != null && jobBeanList.size()>0){
-            for (JobBean jobBean : jobBeanList){
+        if (jobBeanList != null && jobBeanList.size() > 0) {
+            for (JobBean jobBean : jobBeanList) {
                 registerJobToScheduler(scheduler, jobBean);
             }
         }
@@ -45,20 +57,22 @@ public class SchedulerQuartzConfig {
 
 
     /**
-     *  获取定时任务配置参数
+     * 获取定时任务配置参数
+     *
      * @return
      * @throws Exception
      */
-    private List<JobBean> getJobBeanByConfig() throws Exception {
+    private List<JobBean> getJobBeanByConfig()
+            throws Exception {
         Props props = new Props("application-quartz.properties");
         String jobList = props.getStr("jobList");
-        if (jobList == null || "".equals(jobList)){
+        if (jobList == null || "".equals(jobList)) {
             throw new Exception("定时任务集合 jobList 未配置 . . . . . .");
         }
         List<JobBean> jobBeanList = new ArrayList<>();
         String[] jobs = jobList.split(",");
 
-        for (int i = 0 ; i < jobs.length; i++){
+        for (int i = 0; i < jobs.length; i++) {
             JobBean jobBean = new JobBean();
             jobBean.setJobClass(props.getStr(jobs[i] + ".jobClass"));
             jobBean.setJobGroup(jobs[i]);
@@ -70,9 +84,9 @@ public class SchedulerQuartzConfig {
     }
 
 
-
     /**
-     *  将定时任务与其对应的触发器注册到调度器Scheduler中
+     * 将定时任务与其对应的触发器注册到调度器Scheduler中
+     *
      * @param scheduler
      * @param jobBean
      */
@@ -98,14 +112,10 @@ public class SchedulerQuartzConfig {
 
             scheduler.scheduleJob(jobDetail, cronTrigger);
 
-        }catch (Exception e) {
-            logger.error("\n定时任务注册到调度器失败：" , e);
+        } catch (Exception e) {
+            logger.error("\n定时任务注册到调度器失败：", e);
         }
-
     }
-
-
-
 
 
     /**
@@ -116,7 +126,8 @@ public class SchedulerQuartzConfig {
      * @return
      * @throws SchedulerException
      */
-    private String getJobInfo(String name, String group) throws SchedulerException {
+    private String getJobInfo(String name, String group)
+            throws SchedulerException {
         TriggerKey triggerKey = new TriggerKey(name, group);
         CronTrigger cronTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
         return String.format("time:%s,state:%s", cronTrigger.getCronExpression(),
@@ -132,7 +143,8 @@ public class SchedulerQuartzConfig {
      * @return
      * @throws SchedulerException
      */
-    private boolean modifyJob(String name, String group, String time) throws SchedulerException {
+    private boolean modifyJob(String name, String group, String time)
+            throws SchedulerException {
         Date date = null;
         TriggerKey triggerKey = new TriggerKey(name, group);
         CronTrigger cronTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
@@ -151,7 +163,8 @@ public class SchedulerQuartzConfig {
      *
      * @throws SchedulerException
      */
-    private void pauseAllJob() throws SchedulerException {
+    private void pauseAllJob()
+            throws SchedulerException {
         scheduler.pauseAll();
     }
 
@@ -162,11 +175,13 @@ public class SchedulerQuartzConfig {
      * @param group
      * @throws SchedulerException
      */
-    private void pauseJob(String name, String group) throws SchedulerException {
+    private void pauseJob(String name, String group)
+            throws SchedulerException {
         JobKey jobKey = new JobKey(name, group);
         JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-        if (jobDetail == null)
+        if (jobDetail == null) {
             return;
+        }
         scheduler.pauseJob(jobKey);
     }
 
@@ -175,7 +190,8 @@ public class SchedulerQuartzConfig {
      *
      * @throws SchedulerException
      */
-    private void resumeAllJob() throws SchedulerException {
+    private void resumeAllJob()
+            throws SchedulerException {
         scheduler.resumeAll();
     }
 
@@ -186,11 +202,13 @@ public class SchedulerQuartzConfig {
      * @param group
      * @throws SchedulerException
      */
-    private void resumeJob(String name, String group) throws SchedulerException {
+    private void resumeJob(String name, String group)
+            throws SchedulerException {
         JobKey jobKey = new JobKey(name, group);
         JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-        if (jobDetail == null)
+        if (jobDetail == null) {
             return;
+        }
         scheduler.resumeJob(jobKey);
     }
 
@@ -201,11 +219,13 @@ public class SchedulerQuartzConfig {
      * @param group
      * @throws SchedulerException
      */
-    private void deleteJob(String name, String group) throws SchedulerException {
+    private void deleteJob(String name, String group)
+            throws SchedulerException {
         JobKey jobKey = new JobKey(name, group);
         JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-        if (jobDetail == null)
+        if (jobDetail == null) {
             return;
+        }
         scheduler.deleteJob(jobKey);
     }
 }

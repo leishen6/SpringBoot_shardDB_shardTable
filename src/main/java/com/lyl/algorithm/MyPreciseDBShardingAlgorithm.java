@@ -13,28 +13,32 @@ import java.util.Collection;
 /**
  * @PACKAGE_NAME: com.lyl.algorithm
  * @ClassName: MyPreciseDBShardingAlgorithm
- * @Description:  自定义数据库的精确分片算法，根据用户名进行分片
+ * @Description: 自定义数据库的精确分片算法，根据用户名进行分片
  * @Date: 2020-06-18 17:28
  **/
-public class MyPreciseDBShardingAlgorithm  implements PreciseShardingAlgorithm<String> {
+public class MyPreciseDBShardingAlgorithm implements PreciseShardingAlgorithm<String> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    // 分库虚拟节点数量
+    /**
+     * 分库虚拟节点数量
+     */
     public static int virtualNodeCount;
 
-    // 分库虚拟节点范围
+    /**
+     * 分库虚拟节点范围
+     */
     public static String virtualNodeCountRang;
 
 
-    public MyPreciseDBShardingAlgorithm(){
-
-    };
+    public MyPreciseDBShardingAlgorithm() {
+    }
 
 
     /**
-     *  数据分片
-     * @param dbNames 实际数据源集合; springboot0、springboot1
+     * 数据分片
+     *
+     * @param dbNames              实际数据源集合; springboot0、springboot1
      * @param preciseShardingValue 分片键 name 用户名值
      * @return
      */
@@ -58,7 +62,7 @@ public class MyPreciseDBShardingAlgorithm  implements PreciseShardingAlgorithm<S
         for (String each : dbNames) {
             // 将余数与配置的实际数据库名进行匹配
             if (each.endsWith(String.valueOf(shardingValue))) {
-                logger.info("logic DB : "+ each);
+                logger.info("logic DB : {}", each);
                 return each;
             }
         }

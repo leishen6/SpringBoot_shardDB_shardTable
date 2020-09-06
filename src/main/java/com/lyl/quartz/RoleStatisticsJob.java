@@ -12,7 +12,6 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * @PACKAGE_NAME: com.lyl.quartz
  * @ClassName: RoleStatisticsJob
@@ -24,22 +23,24 @@ public class RoleStatisticsJob implements Job {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    private final String lockKey = "RoleStatisticsJob";
-    private final String lockValue = "RoleStatisticsJob";
+    private static final String LOCK_KEY = "RoleStatisticsJob";
+
+    private static final String LOCK_VALUE = "RoleStatisticsJob";
 
     @Override
-    public void execute(JobExecutionContext arg0) throws JobExecutionException {
+    public void execute(JobExecutionContext arg0)
+            throws JobExecutionException {
         logger.debug("Role Quartz execute start . . . . . . .");
 
         RedisTemplateUtils redisTemplateUtils = (RedisTemplateUtils) SpringContextJobUtil
                 .getBean("redisTemplateUtils");
 
         // 获取分布式锁
-        boolean flag = redisTemplateUtils.tryGetDistributedLock(lockKey, lockValue,
+        boolean flag = redisTemplateUtils.tryGetDistributedLock(LOCK_KEY, LOCK_VALUE,
                 SystemConstant.DISTRIBUTEDLOCK_EXPIRETIME);
 
         try {
-            if (flag){
+            if (flag) {
                 // TODO 业务逻辑
                 /**
                  * 通过工具类获取Spring容器中的实例bean
@@ -48,13 +49,13 @@ public class RoleStatisticsJob implements Job {
                  */
                 RoleService roleService = (RoleService) SpringContextJobUtil
                         .getBean("roleService");
-                Role role =  roleService.findRoleByName("程序员");
-                logger.debug("find role by name : " + JSON.toJSONString(role));
+                Role role = roleService.findRoleByName("程序员");
+                logger.debug("find role by name : {}", JSON.toJSONString(role));
             }
-        }finally {
+        } finally {
             // 保证分布式锁最终被释放
-            if (flag){
-                redisTemplateUtils.releaseDistributedLock(lockKey, lockValue);
+            if (flag) {
+                redisTemplateUtils.releaseDistributedLock(LOCK_KEY, LOCK_VALUE);
             }
         }
 

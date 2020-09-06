@@ -3,6 +3,8 @@ package com.lyl.service.impl;
 import com.lyl.bean.Role;
 import com.lyl.dao.RoleDao;
 import com.lyl.service.RoleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("roleService")
 public class RoleServiceImpl implements RoleService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private RoleDao roleDao;
 
@@ -28,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
             roleDao.addRole(role);
             flag = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("add role fail .", e);
         }
         return flag;
     }

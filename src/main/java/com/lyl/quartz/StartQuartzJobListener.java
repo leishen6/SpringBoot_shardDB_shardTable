@@ -35,7 +35,7 @@ public class StartQuartzJobListener implements ApplicationListener<ContextRefres
             Props props = new Props("application-quartz.properties");
             boolean flag = props.getBool("default_if_disable_quartz");
             // 在配置文件中获取是否启用定时任务
-            if (!flag){
+            if (!flag) {
                 quartzScheduler.startJob();
                 logger.debug("定时任务已经启动.......");
             }
@@ -47,11 +47,13 @@ public class StartQuartzJobListener implements ApplicationListener<ContextRefres
 
     /**
      * 向Spring 容器 初始注入scheduler
+     *
      * @return
      * @throws SchedulerException
      */
     @Bean
-    public Scheduler scheduler() throws SchedulerException{
+    public Scheduler scheduler()
+            throws SchedulerException {
         SchedulerFactory schedulerFactoryBean = new StdSchedulerFactory();
         return schedulerFactoryBean.getScheduler();
     }
