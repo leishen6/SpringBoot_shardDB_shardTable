@@ -1,6 +1,11 @@
 package com.lyl.constant;
 
 
+import com.lyl.bean.JobBean;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @PACKAGE_NAME: com.lyl.constant
  * @ClassName: SystemConstant
@@ -53,5 +58,10 @@ public class SystemConstant {
      * redis 分布式锁的过期时间
      **/
     public static final int DISTRIBUTEDLOCK_EXPIRETIME = 1000;
+
+    /**
+     * redis 定时任务使用，系统启动时获取redis定时任务key 和 过期时key对应的处理流程
+     */
+    public static Map<String, JobBean> map = new HashMap<String, JobBean>();
 
 }

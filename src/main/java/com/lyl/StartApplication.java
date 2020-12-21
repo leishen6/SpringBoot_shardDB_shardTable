@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 /**
  * @Title: Application
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date: 2019年8月23日 下午4:38:42
  */
 @SpringBootApplication // 启动类注解，是一个复合注解
+@ServletComponentScan(basePackages = "com.lyl.listener")
 public class StartApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartApplication.class);
