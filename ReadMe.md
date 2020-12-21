@@ -32,3 +32,4 @@
 3.  思否博客：https://segmentfault.com/u/muzilei_5e72d30d2c9fb/articles
 4.  GitHub地址：https://github.com/leishen6?tab=repositories 
 5.  个人网站地址：https://leishen6.github.io/
+6.  微信公众号：木子雷
