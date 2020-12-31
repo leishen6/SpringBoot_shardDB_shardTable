@@ -31,5 +31,6 @@
 2.  掘金博客：https://juejin.im/user/5c67b8046fb9a049a7125a58/posts
 3.  思否博客：https://segmentfault.com/u/muzilei_5e72d30d2c9fb/articles
 4.  GitHub地址：https://github.com/leishen6?tab=repositories 
-5.  个人网站地址：https://leishen6.github.io/
-6.  微信公众号：木子雷
+5.  开源中国：https://my.oschina.net/u/4216693
+6.  个人网站地址：https://leishen6.github.io/
+7.  微信公众号：木子雷
